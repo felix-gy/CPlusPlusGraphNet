@@ -1,5 +1,3 @@
-
-```markdown
 # Distributed Graph Attention Network with TCP in C++
 
 Bienvenidos al repositorio **CPlusPlusGraphNet**. A continuación, encontrarás las instrucciones necesarias para colaborar en este proyecto de forma organizada. 
@@ -106,4 +104,3 @@ Antes de comenzar a trabajar, siempre sincroniza tu copia local con los últimos
 ---
 
 🚀
-```
