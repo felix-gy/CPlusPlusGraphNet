@@ -1,0 +1,42 @@
+# Ignorar archivos de objetos compilados
+*.o
+*.obj
+
+# Ignorar archivos dinámicos
+*.dll
+*.so
+*.dylib
+
+# Ignorar archivos estáticos
+*.lib
+*.a
+
+# Ignorar ejecutables
+*.exe
+*.out
+*.app
+
+# Ignorar archivos de depuración
+*.dSYM/
+*.exe.stackdump
+
+# Ignorar archivos de CMake
+CMakeFiles/
+CMakeCache.txt
+cmake_install.cmake
+Makefile
+
+# Ignorar archivos de Code::Blocks
+*.cbp
+*.depend
+*.layout
+*.layout1
+*.workspace
+
+# Ignorar archivos de QtCreator
+*.autosave
+*.user
+*.user.*
+
+# Ignorar archivos de VS Code
+.vscode/
