@@ -11,7 +11,7 @@ TCPServer server(PORT);
 
 set<int> processingServerList; 
 set<int> clientList;
-
+// Servidores de Procesamiento
 void manageProcessingServer(int PServerSocket)
 {
     string message;
@@ -31,6 +31,7 @@ void manageProcessingServer(int PServerSocket)
     }
 }
 
+// Cliente
 void manageClient(int clientSocket)
 {
     string message;
