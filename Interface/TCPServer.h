@@ -10,21 +10,18 @@
 class TCPServer : public TCPInterface {
 private:
     int serverSocket;
-    int clientSocket;
+    int clientSocket = 0;
     sockaddr_in serverAddr;
     sockaddr_in clientAddr;
     socklen_t clientLen = sizeof(clientAddr);
 public:
-    std::vector<int> clientList;
     TCPServer(int port);
     ~TCPServer();
 
     void start();
     void send(const std::string& data, int clientSocket);
-    void sendToAll(const std::string& data);
     int connectToClient();
-    std::string receive(int  bufferSize) override;
-
+    std::string receive(int clientSocket_, int nbytes); ;
 private:
     void closeSocket(int socket);
 };

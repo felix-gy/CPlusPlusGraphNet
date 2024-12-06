@@ -20,9 +20,6 @@ TCPServer::TCPServer(int port) {
 
 TCPServer::~TCPServer() {
     closeSocket(serverSocket);
-    for (auto &socket : clientList) {
-        closeSocket(socket);
-    }
 }
 
 void TCPServer::start() {
@@ -33,13 +30,11 @@ void TCPServer::start() {
 }
 
 int TCPServer::connectToClient() {
-    
     clientSocket = accept(serverSocket, (struct sockaddr*)&clientAddr, &clientLen);
     if (clientSocket < 0) {
         throw TCPException("Error accepting client connection");
     }
     std::cout << "Client connected!" << std::endl;
-    clientList.push_back(clientSocket);
     return clientSocket;
 }
 
@@ -49,16 +44,10 @@ void TCPServer::send(const std::string& data, int clientSocket_) {
     }
 }
 
-void TCPServer::sendToAll(const std::string& data) {
-    for (auto &socket : clientList) {
-        send(data, socket);
-    }
-}
-
-std::string TCPServer::receive(int nbytes) {
+std::string TCPServer::receive(int clientSocket_, int nbytes) {
     char buffer[nbytes];
     memset(buffer, 0, nbytes);
-    ssize_t bytesRead = read(clientSocket, buffer, nbytes);
+    ssize_t bytesRead = read(clientSocket_, buffer, nbytes);
     if (bytesRead < 0) {
         throw TCPException("Error receiving data");
     }

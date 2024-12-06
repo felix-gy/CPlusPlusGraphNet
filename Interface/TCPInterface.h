@@ -10,7 +10,7 @@ public:
     virtual ~TCPInterface() = default;
 
     // Method to receive data
-    virtual std::string receive(int nbytes) = 0;
+    //virtual std::string receive(int nbytes) = 0;
 };
 
 // Exception class for TCP errors

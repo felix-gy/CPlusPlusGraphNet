@@ -17,7 +17,7 @@ public:
 
     void connectToServer();
     void send(const std::string& data);
-    std::string receive(int nbytes) override;
+    std::string receive(int nbytes);
 
 private:
     void closeSocket(int socket);
