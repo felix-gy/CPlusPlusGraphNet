@@ -6,7 +6,6 @@
 #include <string>
 #include <thread>
 #include <set>
-///
 #include <sstream> 
 #include <iomanip>
 #include <sstream>
@@ -15,6 +14,7 @@
 #include <mutex>
 #include <numeric>
 #include <vector>
+
 using namespace std;
 
 TCPServer server(PORT);
@@ -57,11 +57,9 @@ int col = 0;
 
 void manageProcessingServer(int PServerSocket)
 {
-    cout << "Processing server connected - " << PServerSocket << endl;
     string message;
     stringstream ss;
     while (true) {
-
         message = server.receive(PServerSocket, 1);
         if (message.empty()) break;
         switch (message[0]) {
@@ -88,7 +86,6 @@ void manageProcessingServer(int PServerSocket)
                     fflush(stdout);
                     count = 0;
                     Row_part.clear();
-
                     if ((id+1) == H_rows) {
                         cout  << id<< " - " <<  suma << " " ;
                         string data = convertirArrayATexto(M_col);
@@ -144,13 +141,14 @@ vector<string> dividirEnCuatroPartes(const string& data) {
     }
     return parts;
 }
+
 // Cliente
 void manageClient(int clientSocket)
 {
-    vector<string> partes(4);
+    vector<string> partes(4); // 4 partes de la matriz para cada servidor de procesamiento
     string message;
     stringstream ss;
-    int i=0;
+    int i = 0;
     while (true) {
         ss.str("");
         message = server.receive(clientSocket, 1);
@@ -161,28 +159,22 @@ void manageClient(int clientSocket)
                 return;
             }
             case 'm':{
-                cout << endl;
-                char tipo = server.receive(clientSocket, 1)[0];
-                //cout << "Tipo: " << tipo << endl;
+                char tipo = server.receive(clientSocket, 1)[0]; // C: Columna, F: Fila
                 int id = stoi(server.receive(clientSocket, 5));
                 int size = stoi(server.receive(clientSocket, 5));
                 string data = server.receive(clientSocket, size);
-                //cout << "Received data: " << data << endl;
                 fflush(stdout);
+                partes = dividirEnCuatroPartes(data); // Dividir la matriz en 4 partes
                 i = 0;
-                partes = dividirEnCuatroPartes(data); 
                 for (auto& sock : processingServerList) {
                     ss.str(""); 
                     ss << "M" << tipo << setw(5) << setfill('0') << id << setw(5) << setfill('0') << partes[i].size() << partes[i];
                     //cout << "Enviando a: " << sock << ss.str() << endl;
                     server.send(ss.str(), sock);
-                    
                     i++;
                 }
                 if (tipo == 'C') {
-                    
                     server.send( "A",clientSocket); // confimacion de recepcion
-                    //cout << "Se encvia a " << clientSocket << endl;
                 }
                 break;
             }
@@ -213,9 +205,7 @@ void socketThread(int clientSocket)
 
 int main()
 {
-
     server.start();
-    
     int clientSocket;
     while (true) {
         clientSocket = server.connectToClient();

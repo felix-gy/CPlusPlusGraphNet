@@ -62,24 +62,16 @@ struct Matriz {
   string nombreArchivo;
   int filas;
   int columnas;
-
-  // Constructor que inicializa la estructura con el nombre del archivo y las
-  // dimensiones de la matriz
   Matriz(const string &nombreArchivo, int filas, int columnas)
       : nombreArchivo(nombreArchivo), filas(filas), columnas(columnas) {}
-
-  // Función que retorna una fila específica como un string en el formato
-  // deseado
   string obtenerFila(int indice) const {
     ifstream archivo(nombreArchivo);
     if (!archivo.is_open()) {
       cerr << "Error al abrir el archivo: " << nombreArchivo << endl;
       return "";
     }
-
     string linea;
     int fila_actual = 0;
-
     while (getline(archivo, linea)) {
       if (fila_actual == indice) {
         archivo.close();
@@ -90,7 +82,6 @@ struct Matriz {
         while (ss >> dato) {
           fila.push_back(dato);
         }
-
         stringstream resultado;
         for (size_t i = 0; i < fila.size(); ++i) {
           resultado << fila[i];
@@ -102,12 +93,10 @@ struct Matriz {
       }
       fila_actual++;
     }
-
     archivo.close();
     cerr << "Índice de fila fuera de rango." << endl;
     return "";
   }
-
   // Función que retorna una columna específica como un string en el formato
   // deseado
   string obtenerColumna(int indice) const {
@@ -162,11 +151,9 @@ void agregarColumnaAlArchivo(const string& cadena, const string& nombreArchivo, 
         cerr << "Error al abrir el archivo: " << nombreArchivo << endl;
         return;
     }
-
     stringstream ss(cadena);
     string elemento;
     int fila_actual = 0;
-
     while (getline(ss, elemento, ':')) {
         if (fila_actual < filas) {
             archivo << elemento << (fila_actual == filas - 1 ? "\n" : " ");
@@ -194,112 +181,68 @@ void convertirTextoAVector(const string &texto, vector<float> &vectorNumeros) {
 }
 
 void readThread() {
-  //TextMatrix textMatrix("Dataset/matrix_W*H.txt", H_rows, W_cols);
   string message = "";
-  vector<float> Col_part;
-  int c = 1;
   ostringstream ss;
+
   string fila_H;
   string columna_W;
+
   for (int i = 0; i < W_cols; i++) {
-    ss.str("");
-    cout << "i: ";
-    ss.str("");
     columna_W = W_matrix.obtenerColumna(i);
+    ss.str("");
     ss << "m" << "C" << setw(5) << setfill('0') << i;
     ss << setw(5) << setfill('0') << columna_W.size() << columna_W;
-    cout << ss.str() << endl;
     client.send(ss.str());
+
     // Luego enviamos las filas de la matriz H
     for (int j = 0; j < H_rows; j++) {
-      //cout << "j: " << j << endl;
-      // Solo cuando el servidor halla divido la columna de W en 4 partes en los
-      // servidores de procesamiento, y halla obtenido el resultado de la
-      // primera multiplicacion
+      cout << "j: " << j << endl;
       string confirmation(1, '\0');
       confirmation = client.receive(1);
-      //cout << "Confirmation: " << confirmation << endl;
       if (!(confirmation[0] != 'A')) {
-        //cout << "Dentro de A" << endl;
         fila_H = H_matrix.obtenerFila(j);
         ss.str("");
         ss << "m" << "F" << setw(5) << setfill('0') << j << setw(5)
            << setfill('0') << fila_H.size() << fila_H;
-        
         //cout << "Enviando fila: " << ss.str() << endl;
         client.send(ss.str());
-        fflush(stdout);
       }
     }
     message = client.receive(1);
     if (message[0] == 'R') {
       int id = stoi(client.receive(5));
-      int size = stoi(client.receive(5));
-      string data(size, '\0');  
-      cout << i<< " " << id << " Recibiendo resultado" << endl;
-      data = client.receive(size);
+      int size_col = stoi(client.receive(5));
+
+      string data(size_col, '\0');  
+      cout << id << " Recibiendo resultado" << endl;
+      data = client.receive(size_col);
       //cout << "Data: " << data << endl;
       agregarColumnaAlArchivo(data, M_FILE_T, H_rows);
     }
-
   }
   transponerArchivo(M_FILE_T, M_FILE);
   fflush(stdout);
-  /*
-  while (true) {
-    message = client.receive(1);
-    if (message.empty()) {
-      cout << "message is empty" << endl;
-      break;
-    }
-
-    switch (message[0]) {
-    case 'R': {
-      cout << c++ << endl;
-      int id = stoi(client.receive(5));
-      int size = stoi(client.receive(5));
-      string data = client.receive(size);
-      convertirTextoAVector(data, Col_part);
-      for (int i = 0; i < Col_part.size(); i++) {
-        cout << Col_part[i] << " ";
-      }
-      cout << endl;
-      break;
-    }
-    default:
-      cout << "Unknown message" << endl;
-      break;
-    }
-    cout << "Received: " << message << endl;
-  }
-  */
+  cout << "Matriz resultante guardada en " << M_FILE << endl;
 }
 
 
 int main() {
   client.connectToServer();
-  string message = "C";
+  string message = "C"; // C para indicar que es un cliente
   client.send(message);
   ostringstream ss;
-  int id = 0;
   do {
     ss.str("");
-    cout << "Escribe m para multiplicar matrices o exit para desconectarte: ";
+    cout << "Escribe M para multiplicar matrices de H * W o exit para desconectarte: ";
     getline(cin, message);
     if (message == "exit") {
       client.send("o");
       break;
     }
-    if (message == "m") {
-      string fila_H;
-      string columna_W;
+    if (message == "M") {
+      cout << "Nombre del archivo de la matriz resultante se guardara asi: " << M_FILE << endl;
       thread(readThread).detach();
-      // string confirmacion("0");
-      //  Primero enviamos las columnas de la matriz W
-      // client.send("e"); // Elimar las columnas de W almacenadas en los
-      // servidores de procesamiento
     }
-
   } while (true);
   return 0;
 }

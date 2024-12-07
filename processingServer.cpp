@@ -71,7 +71,7 @@ void manageProcessingServer() {
     switch (message[0]) {
     case 'E':{
       flag_1 = flag_2 = false;
-        // cout << "Reincio" << endl;
+        cout << "Confirmacion de que se proceso una Columna, reinicio de variables" << endl;
         Col_part.clear();
         Row_part.clear();
         i = 0;
