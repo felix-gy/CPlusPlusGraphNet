@@ -1,4 +1,5 @@
 #include "TCPServer.h"
+#include "TCPInterface.h"
 #include <iostream>
 
 TCPServer::TCPServer(int port) {
@@ -6,7 +7,11 @@ TCPServer::TCPServer(int port) {
     if (serverSocket < 0) {
         throw TCPException("Error creating socket");
     }
-
+    int opt = 1;
+    if (setsockopt(serverSocket, SOL_SOCKET, SO_REUSEADDR, &opt, sizeof(opt)) < 0) {
+        closeSocket(serverSocket);
+        TCPException("Error setting socket options");
+    }
     memset(&serverAddr, 0, sizeof(serverAddr));
     serverAddr.sin_family = AF_INET;
     serverAddr.sin_addr.s_addr = INADDR_ANY;
@@ -45,9 +50,10 @@ void TCPServer::send(const std::string& data, int clientSocket_) {
 }
 
 std::string TCPServer::receive(int clientSocket_, int nbytes) {
-    char buffer[nbytes];
+    char buffer[nbytes+1];
     memset(buffer, 0, nbytes);
     ssize_t bytesRead = read(clientSocket_, buffer, nbytes);
+    buffer[bytesRead] = '\0';
     if (bytesRead < 0) {
         throw TCPException("Error receiving data");
     }

@@ -9,6 +9,21 @@ using namespace std;
 
 TCPClient processingServer(IP_ADDRESS, PORT);
 
+string floatToString(float num) {
+    stringstream ss;
+    ss << fixed << num;
+    string str = ss.str();
+
+    // Eliminar ceros finales innecesarios
+    str.erase(str.find_last_not_of('0') + 1, string::npos);
+    // Si termina en punto decimal, también eliminarlo
+    if (str.back() == '.') {
+        str.pop_back();
+    }
+
+    return str;
+}
+
 // Función para convertir una cadena de texto a un vector de enteros
 void convertirTextoAVector(const string &texto, vector<float> &vectorNumeros) {
   vectorNumeros.clear(); // Limpiar el vector antes de llenarlo
@@ -17,7 +32,7 @@ void convertirTextoAVector(const string &texto, vector<float> &vectorNumeros) {
 
   while (getline(ss, segmento, ':')) {
     vectorNumeros.push_back(
-        stoi(segmento)); // Convertir cada segmento a un número entero
+        stof(segmento)); // Convertir cada segmento a un número 
   }
 }
 
@@ -46,48 +61,64 @@ void manageProcessingServer() {
   int col = 0;
   int row = 0;
   int id = 0;
+  bool flag_1 = false;
+  bool flag_2 = false;
   while (true) {
     ss.str("");
     message = processingServer.receive(1);
     if (message.empty())
       break;
     switch (message[0]) {
-    case 'O':{
+    case 'E':{
+      flag_1 = flag_2 = false;
         cout << "Reincio" << endl;
+        Col_part.clear();
+        Row_part.clear();
         i = 0;
         break;
     }
     case 'M': {
-
       char tipo = processingServer.receive(1)[0];
       if (tipo == 'C') {
         col = stoi(processingServer.receive(5));
         int size = stoi(processingServer.receive(5));
-        string data = processingServer.receive(size);
+        string data(size, '\0');
+        data = processingServer.receive(size);
+        cout <<"tipo:" << tipo << " ";
+        cout << "id" << id << " - " << data << endl;
+        fflush(stdout);
         convertirTextoAVector(data, Col_part);
         i++;
+        cout << i<< endl;
+        flag_1 = true;
       } else if (tipo == 'F') {
         id = stoi(processingServer.receive(5));
         int size = stoi(processingServer.receive(5));
-        string data = processingServer.receive(size);
+        string data(size, '\0');
+        data = processingServer.receive(size);
+        cout <<"tipo:" << tipo << " ";
+        cout << "id" << id << " - " << data << endl;
+        fflush(stdout);
+        Row_part.clear();
         convertirTextoAVector(data, Row_part);
-        i++;
+        flag_2 = true;
       }
-      if (i >= 2) {
-
+      if (flag_1 && flag_2) {
+        flag_2 = false;
+        cout << "Calculando producto y suma de vectores" << endl;
+        cout << i << endl;
         float resultado = productoSumaVectores(Row_part, Col_part);
-        // Convertir el número flotante a una cadena para calcular su longitud
-        stringstream tempStream;
-        tempStream << fixed << setprecision(7)<< resultado; // Controla la precisión aquí
-        string resultadoStr = tempStream.str();
+
+        string resultadoStr = floatToString(resultado);;
 
         // Obtener la longitud del número flotante como cadena
         int longitud = resultadoStr.length();
 
         // Formatear la salida con longitud y número flotante
-        ss << "r" <<  setw(5) << setfill('0') << id << setw(15) << setfill('0') << longitud << resultadoStr;
+        ss << "r" << setw(5) << setfill('0') << id;
+        ss << setw(8) << setfill('0') << longitud << resultadoStr;        
         processingServer.send(ss.str());
-        
+        cout << "Resultado: " << id << " - " << ss.str() << endl;
       }
 
       break;
@@ -107,7 +138,7 @@ int main() {
   message = "";
   thread(manageProcessingServer).detach();
   while (true) {
-    cout << "Enter message: ";
+    cout << "Escribe exit para desconectarte: ";
     getline(cin, message);
     if (message == "exit") {
       processingServer.send("o");

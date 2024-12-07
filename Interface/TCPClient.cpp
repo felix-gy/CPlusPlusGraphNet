@@ -36,9 +36,10 @@ void TCPClient::send(const std::string& data) {
 }
 
 std::string TCPClient::receive(int nbytes) {
-    char buffer[nbytes];
+    char buffer[nbytes+1];
     memset(buffer, 0, nbytes);
     ssize_t bytesRead = read(serverSocket, buffer, nbytes);
+    buffer[bytesRead] = '\0';
     if (bytesRead < 0) {
         throw TCPException("Error receiving data");
     }
