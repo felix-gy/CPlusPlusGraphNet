@@ -20,4 +20,5 @@ public:
         : std::runtime_error(message) {}
 };
 
+
 #endif // TCP_INTERFACE_H
