@@ -94,7 +94,7 @@ void manageProcessingServer(int PServerSocket)
                         limpiarArray(M_col);
                         ss.str("");
                         ss << "R" << setw(5) << setfill('0') << id << setw(5) << setfill('0') << data.length() << data;
-                        cout << "Enviando resultado " << ss.str() << endl;
+                        cout << "Enviando resultado " << endl;
                         server.send(ss.str(),clientsoket); // enviar resultado Columna al cliente
                         for (auto& sock : processingServerList) {
                             server.send( "E",sock); // fin de la operacion Columna y fila
@@ -167,6 +167,7 @@ void manageClient(int clientSocket)
                 int size = stoi(server.receive(clientSocket, 5));
                 string data = server.receive(clientSocket, size);
                 fflush(stdout);
+                cout << "llego parte: " << tipo << id << data << endl;
                 partes = dividirEnCuatroPartes(data); // Dividir la matriz en 4 partes
                 i = 0;
                 for (auto& sock : processingServerList) {

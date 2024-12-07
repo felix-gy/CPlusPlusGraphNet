@@ -83,7 +83,7 @@ void manageProcessingServer() {
         int col = stoi(processingServer.receive(5));
         int size = stoi(processingServer.receive(5));
         string data(size, '\0');
-        cout << "Llego parte columna: " << col << endl;
+        cout << id<< " Llego parte columna: " << col << endl;
         data = processingServer.receive(size);
         //cout << "Llego columna" << col << endl;
         // cout <<"tipo:" << tipo << " ";
@@ -96,9 +96,10 @@ void manageProcessingServer() {
       } else if (tipo == 'F') {
         id = stoi(processingServer.receive(5));
         int size = stoi(processingServer.receive(5));
+
         string data(size, '\0');
         data = processingServer.receive(size);
-        cout << "Llego parte fila: " << id << endl;
+        cout << id<< " Llego parte fila: " << data << endl;
         // cout <<"tipo:" << tipo << " ";
         // cout << "id" << id << " - " << data << endl;
         fflush(stdout);
