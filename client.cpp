@@ -10,7 +10,53 @@
 #include <thread>
 #include <vector>
 using namespace std;
+
 TCPClient client(IP_ADDRESS, PORT);
+
+void transponerArchivo(const string& nombreArchivoEntrada, const string& nombreArchivoSalida) {
+    ifstream archivoEntrada(nombreArchivoEntrada);
+    ofstream archivoSalida(nombreArchivoSalida);
+    
+    vector<vector<string>> matrizTemporal;
+    string linea;
+
+    // Leer el archivo de entrada y almacenar temporalmente en matrizTemporal
+    while (getline(archivoEntrada, linea)) {
+        stringstream ss(linea);
+        string item;
+        vector<string> fila;
+
+        while (ss >> item) {
+            fila.push_back(item);
+        }
+
+        matrizTemporal.push_back(fila);
+    }
+
+    size_t filas = matrizTemporal.size();
+    size_t columnas = filas > 0 ? matrizTemporal[0].size() : 0;
+
+    // Escribir la transpuesta directamente en el archivo de salida
+    for (size_t j = 0; j < columnas; ++j) {
+        for (size_t i = 0; i < filas; ++i) {
+            archivoSalida << matrizTemporal[i][j];
+            if (i < filas - 1) {
+                archivoSalida << " ";
+            }
+        }
+        archivoSalida << endl;
+    }
+
+    archivoEntrada.close();
+    archivoSalida.close();
+
+    // Eliminar el archivo original
+    if (remove(nombreArchivoEntrada.c_str()) != 0) {
+        cerr << "Error: No se pudo eliminar el archivo original." << endl;
+    } else {
+        cout << "Archivo original eliminado con éxito." << endl;
+    }
+}
 
 struct Matriz {
   string nombreArchivo;
@@ -192,9 +238,11 @@ void readThread() {
       string data(size, '\0');  
       data = client.receive(size);
       cout << "Data: " << data << endl;
-      agregarColumnaAlArchivo(data, M_FILE, H_rows);
+      agregarColumnaAlArchivo(data, M_FILE_T, H_rows);
     }
+
   }
+  transponerArchivo(M_FILE_T, M_FILE);
   fflush(stdout);
   /*
   while (true) {

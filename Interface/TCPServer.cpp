@@ -16,7 +16,19 @@ TCPServer::TCPServer(int port) {
     serverAddr.sin_family = AF_INET;
     serverAddr.sin_addr.s_addr = INADDR_ANY;
     serverAddr.sin_port = htons(port);
-    // Obtener la IP y puerto del servidor
+    if (bind(serverSocket, (struct sockaddr*)&serverAddr, sizeof(serverAddr)) < 0) {
+        closeSocket(serverSocket);
+        throw TCPException("Error binding socket");
+    }
+}
+TCPServer::~TCPServer() {
+    closeSocket(serverSocket);
+}
+void TCPServer::start() {
+    if (listen(serverSocket, 1) < 0) {
+        throw TCPException("Error listening on socket");
+    }
+        // Obtener la IP y puerto del servidor
     struct sockaddr_in serverInfo;
     socklen_t len = sizeof(serverInfo);
     if (getsockname(serverSocket, (struct sockaddr*)&serverInfo, &len) == 0) {
@@ -26,20 +38,6 @@ TCPServer::TCPServer(int port) {
              << " y puerto: " << ntohs(serverInfo.sin_port) << std::endl;
     } else {
         std::cerr << "Error al obtener información del socket." << std::endl;
-    }
-    if (bind(serverSocket, (struct sockaddr*)&serverAddr, sizeof(serverAddr)) < 0) {
-        closeSocket(serverSocket);
-        throw TCPException("Error binding socket");
-    }
-}
-
-TCPServer::~TCPServer() {
-    closeSocket(serverSocket);
-}
-
-void TCPServer::start() {
-    if (listen(serverSocket, 1) < 0) {
-        throw TCPException("Error listening on socket");
     }
     std::cout << "Server is listening..." << std::endl;
 }
