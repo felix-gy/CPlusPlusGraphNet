@@ -71,7 +71,7 @@ void manageProcessingServer() {
     switch (message[0]) {
     case 'E':{
       flag_1 = flag_2 = false;
-        cout << "Reincio" << endl;
+        // cout << "Reincio" << endl;
         Col_part.clear();
         Row_part.clear();
         i = 0;
@@ -84,20 +84,20 @@ void manageProcessingServer() {
         int size = stoi(processingServer.receive(5));
         string data(size, '\0');
         data = processingServer.receive(size);
-        cout <<"tipo:" << tipo << " ";
-        cout << "id" << id << " - " << data << endl;
+        // cout <<"tipo:" << tipo << " ";
+        // cout << "id" << id << " - " << data << endl;
         fflush(stdout);
         convertirTextoAVector(data, Col_part);
         i++;
-        cout << i<< endl;
+        // cout << i<< endl;
         flag_1 = true;
       } else if (tipo == 'F') {
         id = stoi(processingServer.receive(5));
         int size = stoi(processingServer.receive(5));
         string data(size, '\0');
         data = processingServer.receive(size);
-        cout <<"tipo:" << tipo << " ";
-        cout << "id" << id << " - " << data << endl;
+        // cout <<"tipo:" << tipo << " ";
+        // cout << "id" << id << " - " << data << endl;
         fflush(stdout);
         Row_part.clear();
         convertirTextoAVector(data, Row_part);
@@ -105,8 +105,8 @@ void manageProcessingServer() {
       }
       if (flag_1 && flag_2) {
         flag_2 = false;
-        cout << "Calculando producto y suma de vectores" << endl;
-        cout << i << endl;
+        // cout << "Calculando producto y suma de vectores" << endl;
+        // cout << i << endl;
         float resultado = productoSumaVectores(Row_part, Col_part);
 
         string resultadoStr = floatToString(resultado);;
@@ -118,13 +118,13 @@ void manageProcessingServer() {
         ss << "r" << setw(5) << setfill('0') << id;
         ss << setw(8) << setfill('0') << longitud << resultadoStr;        
         processingServer.send(ss.str());
-        cout << "Resultado: " << id << " - " << ss.str() << endl;
+        //cout << "Resultado: " << id << " - " << ss.str() << endl;
       }
 
       break;
     }
     default: {
-      cout << "Unknown message" << endl;
+      // cout << "Unknown message" << endl;
       break;
     }
     }
@@ -138,7 +138,7 @@ int main() {
   message = "";
   thread(manageProcessingServer).detach();
   while (true) {
-    cout << "Escribe exit para desconectarte: ";
+    // cout << "Escribe exit para desconectarte: ";
     getline(cin, message);
     if (message == "exit") {
       processingServer.send("o");
