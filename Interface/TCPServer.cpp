@@ -1,7 +1,7 @@
 #include "TCPServer.h"
 #include "TCPInterface.h"
 #include <iostream>
-
+#include <arpa/inet.h>
 TCPServer::TCPServer(int port) {
     serverSocket = socket(AF_INET, SOCK_STREAM, 0);
     if (serverSocket < 0) {
@@ -16,7 +16,17 @@ TCPServer::TCPServer(int port) {
     serverAddr.sin_family = AF_INET;
     serverAddr.sin_addr.s_addr = INADDR_ANY;
     serverAddr.sin_port = htons(port);
-
+    // Obtener la IP y puerto del servidor
+    struct sockaddr_in serverInfo;
+    socklen_t len = sizeof(serverInfo);
+    if (getsockname(serverSocket, (struct sockaddr*)&serverInfo, &len) == 0) {
+        char ip[INET_ADDRSTRLEN];
+        inet_ntop(AF_INET, &(serverInfo.sin_addr), ip, INET_ADDRSTRLEN);
+        std::cout << "Servidor iniciado en IP: " << ip
+             << " y puerto: " << ntohs(serverInfo.sin_port) << std::endl;
+    } else {
+        std::cerr << "Error al obtener información del socket." << std::endl;
+    }
     if (bind(serverSocket, (struct sockaddr*)&serverAddr, sizeof(serverAddr)) < 0) {
         closeSocket(serverSocket);
         throw TCPException("Error binding socket");

@@ -213,8 +213,9 @@ void socketThread(int clientSocket)
 
 int main()
 {
-    server.start();
 
+    server.start();
+    
     int clientSocket;
     while (true) {
         clientSocket = server.connectToClient();
