@@ -156,6 +156,7 @@ Matriz H_matrix(H_FILE, H_rows, H_cols); // Matriz de Caracteristicas
 
 // Función para agregar una columna al archivo de la matriz
 void agregarColumnaAlArchivo(const string& cadena, const string& nombreArchivo, int filas) {
+   cout << "Agregando columna al archivo" << endl;
     ofstream archivo(nombreArchivo, ios::app); // Abre el archivo en modo de adición
     if (!archivo.is_open()) {
         cerr << "Error al abrir el archivo: " << nombreArchivo << endl;
@@ -200,10 +201,9 @@ void readThread() {
   ostringstream ss;
   string fila_H;
   string columna_W;
-  string confirmation(1, '\0');
   for (int i = 0; i < W_cols; i++) {
     ss.str("");
-    cout << "i: " << i << endl;
+    cout << "i: ";
     ss.str("");
     columna_W = W_matrix.obtenerColumna(i);
     ss << "m" << "C" << setw(5) << setfill('0') << i;
@@ -212,32 +212,33 @@ void readThread() {
     client.send(ss.str());
     // Luego enviamos las filas de la matriz H
     for (int j = 0; j < H_rows; j++) {
-      cout << "j: " << j << endl;
+      //cout << "j: " << j << endl;
       // Solo cuando el servidor halla divido la columna de W en 4 partes en los
       // servidores de procesamiento, y halla obtenido el resultado de la
       // primera multiplicacion
+      string confirmation(1, '\0');
       confirmation = client.receive(1);
-      cout << "Confirmation: " << confirmation << endl;
+      //cout << "Confirmation: " << confirmation << endl;
       if (!(confirmation[0] != 'A')) {
-        cout << "Dentro de A" << endl;
+        //cout << "Dentro de A" << endl;
         fila_H = H_matrix.obtenerFila(j);
         ss.str("");
         ss << "m" << "F" << setw(5) << setfill('0') << j << setw(5)
            << setfill('0') << fila_H.size() << fila_H;
         
-        cout << "Enviando fila: " << ss.str() << endl;
+        //cout << "Enviando fila: " << ss.str() << endl;
         client.send(ss.str());
         fflush(stdout);
       }
     }
     message = client.receive(1);
     if (message[0] == 'R') {
-      cout << "Recibiendo resultado" << endl;
       int id = stoi(client.receive(5));
       int size = stoi(client.receive(5));
       string data(size, '\0');  
+      cout << i<< " " << id << " Recibiendo resultado" << endl;
       data = client.receive(size);
-      cout << "Data: " << data << endl;
+      //cout << "Data: " << data << endl;
       agregarColumnaAlArchivo(data, M_FILE_T, H_rows);
     }
 

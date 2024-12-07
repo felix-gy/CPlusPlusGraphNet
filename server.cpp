@@ -74,10 +74,10 @@ void manageProcessingServer(int PServerSocket)
                 fflush(stdout);
                 int id = stoi(server.receive(PServerSocket, 5));
                 int n_size = stoi(server.receive(PServerSocket, 8));
-                cout << "El tamaño del resultado es " << n_size << endl;
+                //cout << "El tamaño del resultado es " << n_size << endl;
                 string data( n_size, '\0');
                 data  = server.receive(PServerSocket, n_size);
-                cout << "Resultado de uno: " << id << " - " << data << endl;
+                //cout << "Resultado de uno: " << id << " - " << data << endl;
                 fflush(stdout);
                 unique_lock<std::mutex> lock(mtx);
                 Row_part.push_back(stof(data));
@@ -85,14 +85,14 @@ void manageProcessingServer(int PServerSocket)
                 if (count == 4) {
                     float suma = accumulate(Row_part.begin(), Row_part.end(), 0.0f);
                     M_col[id] = suma;
-                    cout << "Resultado: " << id<< " - " <<  suma << endl;
                     fflush(stdout);
                     count = 0;
                     Row_part.clear();
 
                     if ((id+1) == H_rows) {
+                        cout  << id<< " - " <<  suma << " " ;
                         string data = convertirArrayATexto(M_col);
-                        cout << "Resultado final: " << id<<  " - "<< data << endl;
+                        //cout << "Resultado final: " << id<<  " - "<< data << endl;
                         fflush(stdout);
                         limpiarArray(M_col);
                         ss.str("");
@@ -163,18 +163,18 @@ void manageClient(int clientSocket)
             case 'm':{
                 cout << endl;
                 char tipo = server.receive(clientSocket, 1)[0];
-                cout << "Tipo: " << tipo << endl;
+                //cout << "Tipo: " << tipo << endl;
                 int id = stoi(server.receive(clientSocket, 5));
                 int size = stoi(server.receive(clientSocket, 5));
                 string data = server.receive(clientSocket, size);
-                cout << "Received data: " << data << endl;
+                //cout << "Received data: " << data << endl;
                 fflush(stdout);
                 i = 0;
                 partes = dividirEnCuatroPartes(data); 
                 for (auto& sock : processingServerList) {
                     ss.str(""); 
                     ss << "M" << tipo << setw(5) << setfill('0') << id << setw(5) << setfill('0') << partes[i].size() << partes[i];
-                    cout << "Enviando a: " << sock << ss.str() << endl;
+                    //cout << "Enviando a: " << sock << ss.str() << endl;
                     server.send(ss.str(), sock);
                     
                     i++;
@@ -182,7 +182,7 @@ void manageClient(int clientSocket)
                 if (tipo == 'C') {
                     
                     server.send( "A",clientSocket); // confimacion de recepcion
-                    cout << "Se encvia a " << clientSocket << endl;
+                    //cout << "Se encvia a " << clientSocket << endl;
                 }
                 break;
             }
