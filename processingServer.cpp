@@ -121,6 +121,7 @@ void manageProcessingServer() {
 
         // Formatear la salida con longitud y número flotante
         ss << "r" << setw(5) << setfill('0') << id;
+        cout << "Enviando resultado " << id << " - " << resultadoStr << endl;
         ss << setw(8) << setfill('0') << longitud << resultadoStr;        
         processingServer.send(ss.str());
         
