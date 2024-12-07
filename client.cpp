@@ -193,10 +193,10 @@ void readThread() {
     ss << "m" << "C" << setw(5) << setfill('0') << i;
     ss << setw(5) << setfill('0') << columna_W.size() << columna_W;
     client.send(ss.str());
-
+    cout << "{M}Env Col: " << i << endl;
     // Luego enviamos las filas de la matriz H
     for (int j = 0; j < H_rows; j++) {
-      cout << "j: " << j << endl;
+      cout << "{M}Env Fil : " << j << endl;
       string confirmation(1, '\0');
       confirmation = client.receive(1);
       if (!(confirmation[0] != 'A')) {
@@ -210,11 +210,12 @@ void readThread() {
     }
     message = client.receive(1);
     if (message[0] == 'R') {
+
       int id = stoi(client.receive(5));
       int size_col = stoi(client.receive(5));
 
       string data(size_col, '\0');  
-      cout << id << " Recibiendo resultado" << endl;
+      cout << id << " {R}ecibiendo resultado " << data<< endl;
       data = client.receive(size_col);
       //cout << "Data: " << data << endl;
       agregarColumnaAlArchivo(data, M_FILE_T, H_rows);

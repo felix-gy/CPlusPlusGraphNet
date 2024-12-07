@@ -71,7 +71,7 @@ void manageProcessingServer() {
     switch (message[0]) {
     case 'E':{
       flag_1 = flag_2 = false;
-        cout << "Confirmacion de que se proceso una Columna, reinicio de variables" << endl;
+        cout << "Confirmacion E" << endl;
         Col_part.clear();
         Row_part.clear();
         i = 0;
@@ -80,10 +80,12 @@ void manageProcessingServer() {
     case 'M': {
       char tipo = processingServer.receive(1)[0];
       if (tipo == 'C') {
-        col = stoi(processingServer.receive(5));
+        int col = stoi(processingServer.receive(5));
         int size = stoi(processingServer.receive(5));
         string data(size, '\0');
+        cout << "Llego parte columna: " << col << endl;
         data = processingServer.receive(size);
+        //cout << "Llego columna" << col << endl;
         // cout <<"tipo:" << tipo << " ";
         // cout << "id" << id << " - " << data << endl;
         fflush(stdout);
@@ -96,6 +98,7 @@ void manageProcessingServer() {
         int size = stoi(processingServer.receive(5));
         string data(size, '\0');
         data = processingServer.receive(size);
+        cout << "Llego parte fila: " << id << endl;
         // cout <<"tipo:" << tipo << " ";
         // cout << "id" << id << " - " << data << endl;
         fflush(stdout);
@@ -105,6 +108,7 @@ void manageProcessingServer() {
       }
       if (flag_1 && flag_2) {
         flag_2 = false;
+        
         // cout << "Calculando producto y suma de vectores" << endl;
         // cout << i << endl;
         float resultado = productoSumaVectores(Row_part, Col_part);
@@ -118,7 +122,7 @@ void manageProcessingServer() {
         ss << "r" << setw(5) << setfill('0') << id;
         ss << setw(8) << setfill('0') << longitud << resultadoStr;        
         processingServer.send(ss.str());
-        //cout << "Resultado: " << id << " - " << ss.str() << endl;
+        
       }
 
       break;

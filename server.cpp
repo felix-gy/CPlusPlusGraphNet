@@ -87,17 +87,19 @@ void manageProcessingServer(int PServerSocket)
                     count = 0;
                     Row_part.clear();
                     if ((id+1) == H_rows) {
-                        cout  << id<< " - " <<  suma << " " ;
+                        
                         string data = convertirArrayATexto(M_col);
-                        //cout << "Resultado final: " << id<<  " - "<< data << endl;
+                        
                         fflush(stdout);
                         limpiarArray(M_col);
                         ss.str("");
                         ss << "R" << setw(5) << setfill('0') << id << setw(5) << setfill('0') << data.length() << data;
+                        cout << "Enviando resultado " << ss.str() << endl;
                         server.send(ss.str(),clientsoket); // enviar resultado Columna al cliente
                         for (auto& sock : processingServerList) {
                             server.send( "E",sock); // fin de la operacion Columna y fila
                         }
+
                     }
                     else {
                         server.send( "A",clientsoket); // confimacion de recepcion
@@ -159,6 +161,7 @@ void manageClient(int clientSocket)
                 return;
             }
             case 'm':{
+
                 char tipo = server.receive(clientSocket, 1)[0]; // C: Columna, F: Fila
                 int id = stoi(server.receive(clientSocket, 5));
                 int size = stoi(server.receive(clientSocket, 5));
@@ -174,6 +177,7 @@ void manageClient(int clientSocket)
                     i++;
                 }
                 if (tipo == 'C') {
+                    cout << "Se recivio una columna: " << id << endl;
                     server.send( "A",clientSocket); // confimacion de recepcion
                 }
                 break;
