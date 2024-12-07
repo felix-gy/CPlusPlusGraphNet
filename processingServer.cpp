@@ -58,8 +58,8 @@ void manageProcessingServer() {
   vector<float> Row_part;
   stringstream ss;
   int i = 0;
-  int col = 0;
-  int row = 0;
+  //int col = 0;
+  //int row = 0;
   int id = 0;
   bool flag_1 = false;
   bool flag_2 = false;

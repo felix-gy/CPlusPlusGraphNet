@@ -1,14 +1,14 @@
 #ifndef CONFIG_HPP
 #define CONFIG_HPP
 
-const char* const IP_ADDRESS = "127.0.0.1";
-//const char* const IP_ADDRESS = "4.201.139.31";
+//const char* const IP_ADDRESS = "127.0.0.1";
+const char* const IP_ADDRESS = "4.201.139.31";
 const int PORT = 8080;
 
 // Matriz de Caracteristicas
-//const char* const H_FILE = "Dataset/H_caracteristicas.txt";
-const char* const H_FILE = "Dataset/NormalizedFeatureMatrix.txt";
-const int H_rows = 30;
+const char* const H_FILE = "Dataset/H_caracteristicas.txt";
+//const char* const H_FILE = "Dataset/NormalizedFeatureMatrix.txt";
+const int H_rows = 40;
 const int H_cols = 44;
 //const int H_rows = 11;
 //const int H_cols = 5;
