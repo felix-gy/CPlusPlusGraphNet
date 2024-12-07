@@ -8,7 +8,7 @@
 using namespace std;
 
 TCPClient processingServer(IP_ADDRESS, PORT);
-
+  
 string floatToString(float num) {
     stringstream ss;
     ss << fixed << num;

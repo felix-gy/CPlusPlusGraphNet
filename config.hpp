@@ -14,6 +14,7 @@ const char* const W_FILE = "Dataset/W_pesos.txt";
 const int W_rows = 5;
 const int W_cols = 18;
 
-//
+// Matriz resultante
 const char* const M_FILE = "Dataset/matrix_W_H.txt";
+const char* const M_FILE_T = "Dataset/matrix_W_H_transpuesta.txt";
 #endif // CONFIG_HPP
